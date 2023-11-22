@@ -1,99 +1,99 @@
 #!/usr/bin/python3
 """ """
-from models.base_model import BaseModel
-import unittest
-import datetime
-from uuid import UUID
-import json
-import os
+from tests.test_models.test_base_model import test_basemodel
+from models.city import City
+import pycodestyle
 
 
-class test_basemodel(unittest.TestCase):
+class test_City(test_basemodel):
     """ """
 
     def __init__(self, *args, **kwargs):
         """ """
         super().__init__(*args, **kwargs)
-        self.name = 'BaseModel'
-        self.value = BaseModel
+        self.name = "City"
+        self.value = City
 
-    def setUp(self):
+    def test_state_id(self):
         """ """
-        pass
+        new = self.value()
+        self.assertEqual(type(new.state_id), str)
+
+    def test_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.name), str)
+
+
+class Test_PEP8(unittest.TestCase):
+    """Tests User"""
+
+    def test_pep8_user(self):
+        """Tests pep8 style"""
+        pep8style = pycodestyle.StyleGuide(quiet=True)
+        result = pep8style.check_files(['models/city.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
+
+
+class TestCity(unittest.TestCase):
+    """Tests city class X"""
+
+    @classmethod
+    def setUpClass(cls):
+        """set up test"""
+        cls.city = City()
+        cls.city.name = "LA"
+        cls.city.state_id = "CA"
+
+    @classmethod
+    def teardown(cls):
+        """at end of the test this will tear it down"""
+        del cls.city
 
     def tearDown(self):
+        """ """
         try:
-            os.remove('file.json')
-        except:
+            os.remove("file.json")
+        except Exception:
             pass
 
-    def test_default(self):
-        """ """
-        i = self.value()
-        self.assertEqual(type(i), self.value)
+    def test_pep8_City(self):
+        """Tests pep8 style"""
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(['models/city.py'])
+        self.assertEqual(p.total_errors, 0, "fix pep8")
 
-    def test_kwargs(self):
-        """ """
-        i = self.value()
-        copy = i.to_dict()
-        new = BaseModel(**copy)
-        self.assertFalse(new is i)
+    def test_checking_for_docstring_City(self):
+        """Tests function for the correct output"""
+        self.assertIsNotNone(City.__doc__)
 
-    def test_kwargs_int(self):
-        """ """
-        i = self.value()
-        copy = i.to_dict()
-        copy.update({1: 2})
-        with self.assertRaises(TypeError):
-            new = BaseModel(**copy)
+    def test_attributes_City(self):
+        """Tests function for the correct output"""
+        self.assertTrue('id' in self.city.__dict__)
+        self.assertTrue('created_at' in self.city.__dict__)
+        self.assertTrue('updated_at' in self.city.__dict__)
+        self.assertTrue('state_id' in self.city.__dict__)
+        self.assertTrue('name' in self.city.__dict__)
 
-    def test_save(self):
-        """ Testing save """
-        i = self.value()
-        i.save()
-        key = self.name + "." + i.id
-        with open('file.json', 'r') as f:
-            j = json.load(f)
-            self.assertEqual(j[key], i.to_dict())
+    def test_is_subclass_City(self):
+        """Tests function for the correct output"""
+        self.assertTrue(issubclass(self.city.__class__, BaseModel), True)
 
-    def test_str(self):
-        """ """
-        i = self.value()
-        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         i.__dict__))
+    def test_attribute_types_City(self):
+        """Tests function for the correct output"""
+        self.assertEqual(type(self.city.name), str)
+        self.assertEqual(type(self.city.state_id), str)
 
-    def test_todict(self):
-        """ """
-        i = self.value()
-        n = i.to_dict()
-        self.assertEqual(i.to_dict(), n)
+    def test_save_City(self):
+        """Tests function for the correct output"""
+        self.city.save()
+        self.assertNotEqual(self.city.created_at, self.city.updated_at)
 
-    def test_kwargs_none(self):
-        """ """
-        n = {None: None}
-        with self.assertRaises(TypeError):
-            new = self.value(**n)
+    def test_to_dict_City(self):
+        """Tests function for the correct output"""
+        self.assertEqual('to_dict' in dir(self.city), True)
 
-    def test_kwargs_one(self):
-        """ """
-        n = {'Name': 'test'}
-        with self.assertRaises(KeyError):
-            new = self.value(**n)
 
-    def test_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.id), str)
-
-    def test_created_at(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.created_at), datetime.datetime)
-
-    def test_updated_at(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.updated_at), datetime.datetime)
-        n = new.to_dict()
-        new = BaseModel(**n)
-        self.assertFalse(new.created_at == new.updated_at)
+if __name__ == "__main__":
+    unittest.main()
