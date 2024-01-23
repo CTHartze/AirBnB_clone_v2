@@ -50,7 +50,7 @@ class DBStorage:
 
         else:
             if type(cls) == str:
-                cls = eval(csl)
+                cls = eval(cls)
 
             tables = [cls]
 
